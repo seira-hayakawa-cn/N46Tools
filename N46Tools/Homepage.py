@@ -1,6 +1,6 @@
 import datetime
 import json
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 
 import requests
 
@@ -38,15 +38,15 @@ def __api_request(
 ) -> requests.Response:
     api_url: str = f'{__HOST}/api/list/{api_name}?{param}&callback=res'
 
-    print(api_url)
-    print(header['referer'])
     response: requests.Response = requests.get(api_url, headers=header)
     return response
 
 
-def get_member() -> List[Dict[str, str]]:
+def get_member() -> Dict[str, Union[str, List[Dict[str, str]]]]:
     """
     Get all members' info.
+
+    @return: Member info Dict.
     """
     api_name: str = 'member'
 
@@ -60,7 +60,7 @@ def get_member() -> List[Dict[str, str]]:
         header=__HEADER
     )
 
-    ret_list: Dict[str, str] = json.loads(response.text[4:-2])['data']
+    ret_list: Dict[str, str] = json.loads(response.text[4:-2])
     return ret_list
 
 
@@ -69,7 +69,7 @@ def get_news(
         category: str = None,
         count: int = 10,
         start: int = 0
-) -> List[Dict[str, str]]:
+) -> Dict[str, Union[str, List[Dict[str, str]]]]:
     """
     Get Nogizaka46 news.
     @param date: Time Range of the news. The format of date is 'YYYYMM', 
@@ -78,7 +78,7 @@ def get_news(
         'meet', 'live', 'goods', 'release', 'tv', 'radio', 'musical', 'book', 'web', 'others'.
     @param count: Count of news.
     @param start: Start index of news.
-    @return: List of news dict.
+    @return: News Dict.
     """
     api_name: str = 'news'
 
@@ -132,7 +132,7 @@ def get_news(
         header=__HEADER
     )
 
-    ret_list: Dict[str, str] = json.loads(response.text[4:-2])['data']
+    ret_list: Dict[str, str] = json.loads(response.text[4:-2])
     return ret_list
 
 
@@ -140,7 +140,7 @@ def get_schedule(
         member_name: str = None,
         date: str = None,
         category: str = None,
-) -> List[Dict[str, str]]:
+) -> Dict[str, Union[str, List[Dict[str, Union[str, List[str]]]]]]:
     """
     Get Nogizaka46 schedule.
     @param member_name: Member's English name.
@@ -148,7 +148,7 @@ def get_schedule(
         which represents the year and month.
     @param category: Category of schedule. There are 10 categories: 
         'meet', 'live', 'goods', 'release', 'tv', 'radio', 'musical', 'book', 'web', 'others'.
-    @return: List of schedule dict.
+    @return: Dict of schedule dict.
     """
     api_name: str = 'schedule'
 
@@ -223,21 +223,21 @@ def get_schedule(
         header=__HEADER
     )
 
-    ret_list: Dict[str, str] = json.loads(response.text[4:-2])['data']
+    ret_list: Dict[str, str] = json.loads(response.text[4:-2])
     return ret_list
 
 def get_blog(
         member_name: str = None,
         count: int = 8,
         start: int = 0
-) -> List[Dict[str, str]]:
+) -> Dict[str, Union[str, List[Dict[str, str]]]]:
     """
     Get Nogizaka46 Member's blog.
 
     @param member_name: Member's English Name.
     @param count: Count of news.
     @param start: Start index of news.
-    @return: List of blog dict.
+    @return: Dict of blog dict.
     """
     api_name: str = 'blog'
     current_timestamp: str = datetime.datetime.now().strftime('%M%S')
@@ -270,5 +270,43 @@ def get_blog(
         header=__HEADER
     )
 
-    ret_list = json.loads(response.text[4:-2])['data']
+    ret_list = json.loads(response.text[4:-2])
+    return ret_list
+
+
+def get_mobile_headlines() -> List[Dict[str, str]]:
+    """
+    Get headlines of Nogizaka46 Mobile.
+
+    @return: List of Headlines.
+    """
+    api_url: str = f'{__HOST}/api/external/mobile'
+
+    current_timestamp: str = datetime.datetime.now().strftime('%M%S')
+    referer_url: str = f'{__HOST}/?ima={current_timestamp}'
+
+    __HEADER['referer'] = referer_url
+    response: requests.Response = requests.get(api_url, headers=__HEADER)
+    ret_list = json.loads(response.text)
+    return ret_list
+
+
+def get_single_member_filter():
+    """
+    Get member filter of each single.
+
+    @return: Dict.
+    """
+    api_name: str = 'member_filter'
+
+    current_timestamp: str = datetime.datetime.now().strftime('%M%S')
+    referer_url: str = f'{__HOST}/search/artist?ima={current_timestamp}'
+
+    __HEADER['referer'] = referer_url
+    response: requests.Response = __api_request(
+        api_name=api_name,
+        param='',
+        header=__HEADER
+    )
+    ret_list = json.loads(response.text[4:-2])
     return ret_list
