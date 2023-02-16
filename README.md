@@ -9,7 +9,7 @@ See [Docs](https://github.com/seira-hayakawa-cn/N46Tools/wiki).
 ## Requirements
 
 - Python 3, version >= 3.7
-- requests
+- requests package.
 
 ## How to use
 
