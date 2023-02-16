@@ -291,7 +291,7 @@ def get_mobile_headlines() -> List[Dict[str, str]]:
     return ret_list
 
 
-def get_single_member_filter():
+def get_single_member_filter() -> Dict[str, Union[str, List[Dict[str, Union[str, List[List[str]]]]]]]:
     """
     Get member filter of each single.
 
