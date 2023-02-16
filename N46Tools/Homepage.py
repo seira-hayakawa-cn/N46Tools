@@ -45,6 +45,9 @@ def __api_request(
 
 
 def get_member() -> List[Dict[str, str]]:
+    """
+    Get all members' info.
+    """
     api_name: str = 'member'
 
     current_timestamp: str = datetime.datetime.now().strftime('%M%S')
