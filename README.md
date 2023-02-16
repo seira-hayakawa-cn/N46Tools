@@ -1,3 +1,3 @@
 # N46Tools
 
-An API wrapper for [Nogizaka46](https://www.nogizaka46.com/) Official Website.
+An Python API wrapper for [Nogizaka46 Official Website](https://www.nogizaka46.com/).
